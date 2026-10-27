@@ -1,7 +1,7 @@
 // Yigit Kesler 251ADB030
 // https://github.com/yigitkesler/calc-lab-home
 // Compile with: gcc -O2 -Wall -Wextra -std=c17 -o calc calc.c -lm
-// Resources used: Gemini
+// Resources used chat gpt :https://chatgpt.com/share/6ae115a3-8718-83eb-8b38-b1f8f639c90f
  #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,7 +67,8 @@ char lex_get(Lexer *l)
 {
     return l->idx < l->len ? l->src[l->idx++] : '\0';
 }
-
+// The lexer keeps indices into the original file, so idx + 1 includes
+// characters in previous lines and comments in every error position.
 Token get_next_token(Lexer *l)
 {
     while (l->idx < l->len) {
@@ -218,7 +219,11 @@ long long ipow(long long base, long long exp)
 
     return res;
 }
-
+// Parsing the exponent with parse_power makes ** right-associative:
+// 2 ** 3 ** 2 is evaluated as 2 ** (3 ** 2).
+// Integer operands keep integer arithmetic; either float promotes to double.
+// Negative integer exponents are reported at the exponent's first token;
+// non-finite floating results are reported at the operator.
 ResultVal parse_power(Parser *p)
 {
     if (global_error) {
@@ -261,7 +266,10 @@ ResultVal parse_power(Parser *p)
 
     return left;
 }
-
+// Terms consume powers before multiplication and division; expressions
+// consume terms before addition and subtraction, preserving precedence.
+// Save the right operand's first token before parsing it so division by
+// zero points to that operand, including its opening parenthesis.
 ResultVal parse_term(Parser *p)
 {
     if (global_error) {
@@ -381,7 +389,11 @@ void create_directory_recursive(const char *path)
         exit(1);
     }
 }
-
+// Each line is parsed through indices into the original buffer without
+// copying the line. The line boundary also gives the error position for
+// a missing operand or closing parenthesis.
+// Results grow geometrically and are kept until the entire file passes,
+// so a later error produces only ERROR:<pos>, without partial results.
 int evaluate_file_content(
     const char *content,
     long long len,
