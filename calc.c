@@ -2,6 +2,9 @@
 // https://github.com/yigitkesler/calc-lab-home
 // Compile with: gcc -O2 -Wall -Wextra -std=c17 -o calc calc.c -lm
 // Resources used chat gpt :https://chatgpt.com/share/6ae115a3-8718-83eb-8b38-b1f8f639c90f
+// ChatGPT helped explain recursion, loops, operator precedence,
+// parsing logic, error positions, exit codes, and processing
+// multiple expressions in a file.
  #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
